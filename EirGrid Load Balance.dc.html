@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-ed56fcc6-5207-4b5c-91c1-21215d17d6be/styles.css">
+<script src="_ds/nocturne-ed56fcc6-5207-4b5c-91c1-21215d17d6be/_ds_bundle.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#13252a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Grid Balance">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<script>
+window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); window.__egInstallEvent = e; });
+if ('serviceWorker' in navigator) { try { navigator.serviceWorker.register('./sw.js').catch(function () {}); } catch (e) {} }
+</script>
+<style>
+.eg-app{
+  --eg-bg:#0f1a1e; --eg-bg2:#13252a; --eg-surface:#16262c; --eg-surface2:#1b2f36;
+  --eg-line:rgba(198,232,223,.14); --eg-line-soft:rgba(198,232,223,.07);
+  --eg-text:#e8f1ee; --eg-muted:#94ada8;
+  --eg-accent:#2ec4a8; --eg-accent-brand:#009982; --eg-accent-ink:#03211c;
+  --eg-accent-soft:rgba(46,196,168,.14);
+  --eg-blue:#57b6ea; --eg-amber:#e8a33d; --eg-yellow:#e9c65a; --eg-violet:#9184d9;
+  --eg-red:#e57468; --eg-good:#3fc48f;
+  --eg-scrim:rgba(5,12,14,.66);
+  --color-accent:#2ec4a8; --color-accent-2:#9184d9;
+}
+.eg-app.eg-organic{
+  --eg-page:#e6e0d1;
+  --eg-bg:#f6f2e8; --eg-bg2:#fffdf6; --eg-surface:#fffdf8; --eg-surface2:#fffefb;
+  --eg-line:rgba(18,46,42,.16); --eg-line-soft:rgba(18,46,42,.08);
+  --eg-text:#122e2a; --eg-muted:#5b736e;
+  --eg-accent:#00806d; --eg-accent-brand:#009982; --eg-accent-ink:#ffffff;
+  --eg-accent-soft:rgba(0,153,130,.12);
+  --eg-blue:#1d6d99; --eg-amber:#96601a; --eg-yellow:#7d6111; --eg-violet:#5a51a4;
+  --eg-red:#a8443a; --eg-good:#1d7a56;
+  --eg-scrim:rgba(38,48,45,.42);
+  --color-accent:#00806d;
+}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#0b1113;display:flex;align-items:flex-start;justify-content:center;min-height:100dvh;font-family:Inter,system-ui,sans-serif;color:#e8f1ee}
+.eg-toptabs{display:none}
+@media (min-width:900px){
+  .eg-app{zoom:1.18;height:calc(100dvh / 1.18);max-width:820px;border-left:1px solid var(--eg-line);border-right:1px solid var(--eg-line)}
+  .eg-toptabs{display:flex;gap:3px;flex:none}
+  .eg-bottomtabs{display:none !important}
+  .eg-charts{grid-template-columns:repeat(3,1fr) !important}
+  .eg-dcgrid{display:grid !important;grid-template-columns:repeat(3,1fr);align-items:start}
+  .eg-ovl{justify-content:center !important;align-items:center;padding:22px}
+  .eg-sheet{border-radius:16px !important;border:1px solid var(--eg-line);max-width:620px;width:100%;max-height:82% !important;padding-bottom:20px !important}
+  .eg-grab{display:none}
+}
+a{color:#2ec4a8;text-decoration:none}
+a:hover{color:#009982}
+@keyframes eg-rise{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes eg-fade{from{opacity:0}to{opacity:1}}
+@keyframes eg-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</helmet>
+<div class="eg-app" style="{{ appStyle }}">
+
+<div style="padding:max(13px,env(safe-area-inset-top)) 16px 11px;display:flex;align-items:center;gap:10px;background:var(--eg-bg2);border-bottom:1px solid var(--eg-line);flex:none">
+  <div style="width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#03211c;flex:none;background-color:#2EC4A8"><i class="ph ph-lightning" style="font-size:19px"></i></div>
+  <div style="flex:1;min-width:0">
+    <div style="font-size:13.5px;font-weight:600;letter-spacing:-.01em;line-height:1.2">Grid Balance</div>
+    <div style="font-size:10px;color:var(--eg-muted);line-height:1.4">{{ clockLabel }}</div>
+  </div>
+  <div class="eg-toptabs">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+      <button onClick="{{ t.onSelect }}" style="{{ t.topStyle }}" style-hover="background:var(--eg-surface)"><i class="ph {{ t.icon }}" style="font-size:14px"></i>{{ t.label }}</button>
+    </sc-for>
+  </div>
+  <div style="display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:999px;border:1px solid var(--eg-line);flex:none">
+    <div style="{{ liveDotStyle }}"></div>
+    <span style="font-size:9.5px;font-weight:600;letter-spacing:.08em;color:var(--eg-muted)">{{ liveLabel }}</span>
+  </div>
+  <button onClick="{{ toggleTheme }}" style="width:32px;height:32px;flex:none;border-radius:9px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-muted);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--eg-accent);color:var(--eg-accent)"><i class="ph {{ themeIcon }}" style="font-size:15px"></i></button>
+</div>
+
+<div style="flex:1;overflow:auto;-webkit-overflow-scrolling:touch">
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div style="padding:14px 16px 24px;display:flex;flex-direction:column;gap:12px">
+  
+
+  <div style="display:flex;align-items:baseline;gap:7px;padding:2px 0 0">
+    <div style="font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--eg-muted);flex:1">Real time system information</div>
+    <div style="font-size:9.5px;color:var(--eg-muted);white-space:nowrap">{{ chartWindowLabel }}</div>
+  </div>
+
+  <div class="eg-charts" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <sc-for list="{{ charts }}" as="c" hint-placeholder-count="5">
+      <div onClick="{{ c.onOpen }}" style="border:1px solid var(--eg-line);border-radius:12px;background:var(--eg-surface);padding:10px 0 0;cursor:pointer;overflow:hidden;display:flex;flex-direction:column;gap:5px" style-hover="border-color:var(--eg-accent)">
+        <div style="display:flex;align-items:center;gap:5px;padding:0 10px">
+          <div style="flex:1;min-width:0;font-size:9.5px;color:var(--eg-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.label }}</div>
+          <i class="ph ph-arrows-out-simple" style="font-size:11px;color:var(--eg-muted)"></i>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:4px;padding:0 10px">
+          <span style="font-size:20px;font-weight:600;letter-spacing:-.03em">{{ c.nowValue }}</span>
+          <span style="font-size:9.5px;color:var(--eg-muted)">{{ c.unit }}</span>
+          <span style="{{ c.deltaStyle }}">{{ c.delta }}</span>
+        </div>
+        <svg viewBox="0 0 160 42" preserveAspectRatio="none" style="width:100%;height:42px;display:block">
+          <path d="{{ c.sparkArea }}" style="{{ c.areaStyle }}"></path>
+          <path d="{{ c.sparkLine }}" style="{{ c.lineStyle }}"></path>
+        </svg>
+      </div>
+    </sc-for>
+
+    <div onClick="{{ openMix }}" style="grid-column: 1 / -1; border: 1px solid var(--eg-line); border-radius: 12px; background: var(--eg-surface); padding: 11px 12px 12px; cursor: pointer; display: flex; flex-direction: column; gap: 9px; width: 100%; box-sizing: border-box" style-hover="border-color:var(--eg-accent)">
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="flex:1;font-size:9.5px;color:var(--eg-muted)">Fuel Mix · last 24 h average</div>
+        <i class="ph ph-arrows-out-simple" style="font-size:11px;color:var(--eg-muted)"></i>
+      </div>
+      <div style="display:flex;height:9px;border-radius:99px;overflow:hidden;background:var(--eg-line-soft)">
+        <sc-for list="{{ mix }}" as="m" hint-placeholder-count="5">
+          <div style="{{ m.segStyle }}"></div>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px 12px">
+        <sc-for list="{{ mix }}" as="m" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;gap:5px">
+            <div style="{{ m.dotStyle }}"></div>
+            <span style="font-size:10px;color:var(--eg-muted)">{{ m.label }}</span>
+            <span style="font-size:10px;font-weight:600">{{ m.pctLabel }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="font-size:9.5px;line-height:1.5;color:var(--eg-muted);padding:2px 2px 0">{{ dataNote }}</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPlan }}" hint-placeholder-val="{{ false }}">
+<div style="padding:14px 16px 24px;display:flex;flex-direction:column;gap:12px">
+
+  <div style="border:1px solid var(--eg-line);border-radius:14px;background:var(--eg-surface);padding:13px;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="flex:1;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--eg-muted)">Cluster substation</div>
+      <button onClick="{{ openSchedule }}" style="min-height:30px;padding:0 10px;border-radius:8px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-muted);font-family:Inter,system-ui,sans-serif;font-size:10.5px;font-weight:600;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:5px" style-hover="border-color:var(--eg-accent);color:var(--eg-accent)"><i class="ph ph-clock-countdown" style="font-size:13px"></i>Best windows</button>
+    </div>
+    <div style="display:flex;align-items:baseline;gap:5px;flex-wrap:wrap">
+      <span style="font-size:27px;font-weight:600;letter-spacing:-.035em">{{ cluster.used }}</span>
+      <span style="font-size:11px;color:var(--eg-muted)">of {{ cluster.cap }} firm · {{ cluster.headroom }} spare</span>
+    </div>
+    <div style="display:flex;height:15px;border-radius:5px;overflow:hidden;background:var(--eg-line-soft);border:1px solid var(--eg-line)">
+      <sc-for list="{{ cluster.segments }}" as="g" hint-placeholder-count="3">
+        <div style="{{ g.style }}"></div>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px 12px">
+      <sc-for list="{{ cluster.legend }}" as="l" hint-placeholder-count="3">
+        <div style="display:flex;align-items:center;gap:5px">
+          <div style="{{ l.dotStyle }}"></div>
+          <span style="font-size:10px;color:var(--eg-muted)">{{ l.label }}</span>
+          <span style="font-size:10px;font-weight:600">{{ l.value }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="height:1px;background:var(--eg-line)"></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      <sc-for list="{{ planStats }}" as="k" hint-placeholder-count="3">
+        <div style="min-width:0">
+          <div style="font-size:9.5px;color:var(--eg-muted);white-space:nowrap">{{ k.label }}</div>
+          <div style="{{ k.style }}">{{ k.value }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font-size:10px;line-height:1.45;color:var(--eg-muted)">{{ planNote }}</div>
+    <button onClick="{{ applyPlan }}" style="{{ applyStyle }}" style-hover="background:var(--eg-accent);color:var(--eg-accent-ink)"><i class="ph ph-power" style="font-size:15px"></i>{{ applyLabel }}</button>
+  </div>
+
+  <sc-if value="{{ hasBreach }}" hint-placeholder-val="{{ false }}">
+  <div style="border:1px solid var(--eg-red);border-radius:14px;background:var(--eg-surface);padding:13px;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:center;gap:8px">
+      <i class="ph ph-warning-octagon" style="font-size:17px;color:var(--eg-red)"></i>
+      <div style="flex:1;font-size:11.5px;font-weight:600;color:var(--eg-red)">{{ breachTitle }}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <sc-for list="{{ breachRows }}" as="b" hint-placeholder-count="2">
+        <div style="display:flex;align-items:center;gap:9px">
+          <div style="width:3px;height:26px;border-radius:99px;background:var(--eg-red);flex:none"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b.title }}</div>
+            <div style="font-size:9.5px;color:var(--eg-muted)">{{ b.reason }}</div>
+          </div>
+          <div style="font-size:12.5px;font-weight:600">{{ b.usageLabel }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font-size:10px;line-height:1.5;color:var(--eg-muted);padding-top:2px;border-top:1px solid var(--eg-line)">{{ breachFix }}</div>
+  </div>
+  </sc-if>
+
+  <div class="eg-dcgrid" style="display:flex;flex-direction:column;gap:12px">
+  <sc-for list="{{ dcBars }}" as="d" hint-placeholder-count="3">
+    <div style="border:1px solid var(--eg-line);border-radius:14px;background:var(--eg-surface);overflow:hidden">
+      <div style="padding:11px 13px;display:flex;flex-direction:column;gap:8px;background:var(--eg-bg2);border-bottom:1px solid var(--eg-line)">
+        <div style="display:flex;align-items:center;gap:9px">
+          <div style="{{ d.dotStyle }}"></div>
+          <div style="flex:1;min-width:0;font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ d.name }}</div>
+          <div style="font-size:11px;color:var(--eg-muted);white-space:nowrap">{{ d.usedLabel }}</div>
+        </div>
+        <div style="display:flex;height:11px;border-radius:4px;overflow:hidden;background:var(--eg-line-soft);border:1px solid var(--eg-line)">
+          <sc-for list="{{ d.segments }}" as="g" hint-placeholder-count="3">
+            <div style="{{ g.style }}"></div>
+          </sc-for>
+        </div>
+      </div>
+      <sc-for list="{{ d.rows }}" as="h" hint-placeholder-count="6">
+        <div onClick="{{ h.onOpen }}" style="padding:8px 13px;display:flex;align-items:center;gap:9px;cursor:pointer;border-bottom:1px solid var(--eg-line-soft)" style-hover="background:var(--eg-surface2)">
+          <div style="width:34px;font-size:12.5px;font-weight:600">{{ h.usageLabel }}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:11.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ h.name }}</div>
+            <div style="font-size:9.5px;color:var(--eg-muted)">{{ h.sub }}</div>
+          </div>
+          <div style="{{ h.prioStyle }}">{{ h.priority }}</div>
+          <div style="{{ h.stateStyle }}">{{ h.state }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-for>
+  </div>
+
+  <div style="border:1px solid var(--eg-line);border-radius:14px;background:var(--eg-surface);padding:13px;display:flex;flex-direction:column;gap:10px">
+    <div style="font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--eg-muted)">Extra load request</div>
+    
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      <sc-for list="{{ requestSites }}" as="r" hint-placeholder-count="4">
+        <button onClick="{{ r.onPick }}" style="{{ r.style }}" style-hover="border-color:var(--eg-accent)">{{ r.label }}</button>
+      </sc-for>
+    </div>
+    <div style="display:flex;align-items:center;gap:9px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:10px;color:var(--eg-muted)">Requested</div>
+        <div style="display:flex;align-items:baseline;gap:4px"><span style="font-size:22px;font-weight:600;letter-spacing:-.03em">{{ requestKw }}</span><span style="font-size:11px;color:var(--eg-muted)">{{ unit }}</span></div>
+      </div>
+      <button onClick="{{ requestDown }}" style="width:44px;height:44px;border-radius:11px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-text);font-size:18px;cursor:pointer" style-hover="border-color:var(--eg-accent);color:var(--eg-accent)">−</button>
+      <button onClick="{{ requestUp }}" style="width:44px;height:44px;border-radius:11px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-text);font-size:18px;cursor:pointer" style-hover="border-color:var(--eg-accent);color:var(--eg-accent)">+</button>
+    </div>
+    <sc-if value="{{ hasRequest }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:8px;padding-top:2px;border-top:1px solid var(--eg-line)">
+      <div style="display:flex;align-items:flex-start;gap:9px">
+        <i class="ph {{ requestIcon }}" style="{{ requestIconStyle }}"></i>
+        <div style="flex:1;font-size:11px;line-height:1.45;font-weight:600">{{ requestVerdict }}</div>
+      </div>
+      <sc-for list="{{ requestDisplaced }}" as="r" hint-placeholder-count="2">
+        <div style="display:flex;align-items:center;gap:9px">
+          <i class="ph ph-arrow-down-right" style="font-size:13px;color:var(--eg-muted)"></i>
+          <div style="flex:1;min-width:0;font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.title }}</div>
+          <div style="font-size:10.5px;color:var(--eg-muted)">{{ r.detail }}</div>
+        </div>
+      </sc-for>
+    </div>
+    </sc-if>
+  </div>
+
+  
+</div>
+</sc-if>
+
+<sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+<div style="padding:14px 16px 24px;display:flex;flex-direction:column;gap:12px">
+  
+
+  <div style="border:1px solid var(--eg-line);border-radius:14px;background:var(--eg-surface);padding:13px;display:flex;flex-direction:column;gap:10px">
+    <div style="font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--eg-muted)">Capacity</div>
+    
+    <sc-for list="{{ capacityConfig }}" as="c" hint-placeholder-count="3">
+      <div style="display:flex;align-items:center;gap:9px;padding:6px 0;border-top:1px solid var(--eg-line-soft)">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11.5px;font-weight:600">{{ c.label }}</div>
+          <div style="font-size:9.5px;color:var(--eg-muted)">{{ c.sub }}</div>
+        </div>
+        <button onClick="{{ c.down }}" style="width:34px;height:34px;border-radius:9px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-text);font-size:15px;cursor:pointer">−</button>
+        <div style="min-width:52px;text-align:center;font-size:13px;font-weight:600;white-space:nowrap">{{ c.valueLabel }}</div>
+        <button onClick="{{ c.up }}" style="width:34px;height:34px;border-radius:9px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-text);font-size:15px;cursor:pointer">+</button>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="border:1px solid var(--eg-line);border-radius:14px;background:var(--eg-surface);padding:13px;display:flex;flex-direction:column;gap:10px">
+    <div style="font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--eg-muted)">Time rules</div>
+    <div style="font-size:9.5px;line-height:1.5;color:var(--eg-muted)">A higher multiplier raises the grid value of every business-hours hall in that window, so those halls win substation space ahead of batch halls.</div>
+    <sc-for list="{{ windows }}" as="w" hint-placeholder-count="5">
+      <div style="display:flex;align-items:center;gap:9px;padding:6px 0;border-top:1px solid var(--eg-line-soft)">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11.5px;font-weight:600">{{ w.label }}</div>
+          <div style="font-size:9.5px;color:var(--eg-muted)">{{ w.range }}</div>
+        </div>
+        <div style="{{ w.tagStyle }}">{{ w.tag }}</div>
+        <button onClick="{{ w.down }}" style="width:34px;height:34px;border-radius:9px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-text);font-size:15px;cursor:pointer">−</button>
+        <div style="min-width:38px;text-align:center;font-size:13px;font-weight:600">{{ w.multLabel }}</div>
+        <button onClick="{{ w.up }}" style="width:34px;height:34px;border-radius:9px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-text);font-size:15px;cursor:pointer">+</button>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="border:1px solid var(--eg-line);border-radius:14px;background:var(--eg-surface);padding:13px;display:flex;flex-direction:column;gap:10px">
+    <div style="font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--eg-muted)">Datacentres and halls</div>
+    <sc-for list="{{ siteConfig }}" as="s" hint-placeholder-count="3">
+      <div style="display:flex;flex-direction:column;gap:7px;padding:9px 0;border-top:1px solid var(--eg-line-soft)">
+        <div style="display:flex;align-items:center;gap:8px">
+          <input value="{{ s.name }}" onChange="{{ s.onRename }}" style="flex:1;min-width:0;min-height:38px;padding:0 10px;border-radius:9px;border:1px solid var(--eg-line);background:var(--eg-bg2);color:var(--eg-text);font-family:Inter,system-ui,sans-serif;font-size:12px">
+          <button onClick="{{ s.onDelete }}" style="width:38px;height:38px;border-radius:9px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-red);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--eg-red)"><i class="ph ph-trash" style="font-size:14px"></i></button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="flex:1;font-size:10px;color:var(--eg-muted)">{{ s.sub }}</div>
+          <button onClick="{{ s.removeHall }}" style="min-height:38px;padding:0 11px;border-radius:9px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-muted);font-family:Inter,system-ui,sans-serif;font-size:11px;font-weight:600;cursor:pointer" style-hover="border-color:var(--eg-accent);color:var(--eg-accent)">− Hall</button>
+          <button onClick="{{ s.addHall }}" style="min-height:38px;padding:0 11px;border-radius:9px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-muted);font-family:Inter,system-ui,sans-serif;font-size:11px;font-weight:600;cursor:pointer" style-hover="border-color:var(--eg-accent);color:var(--eg-accent)">+ Hall</button>
+        </div>
+      </div>
+    </sc-for>
+    <button onClick="{{ addSite }}" style="min-height:44px;border-radius:11px;border:1px dashed var(--eg-line);background:transparent;color:var(--eg-accent);font-family:Inter,system-ui,sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px" style-hover="border-color:var(--eg-accent)"><i class="ph ph-plus" style="font-size:14px"></i>Add datacentre</button>
+    <div style="font-size:9.5px;line-height:1.5;color:var(--eg-muted)">Open a hall from the Plan tab to set its power draw, priority and current source.</div>
+  </div>
+
+  <div style="border:1px solid var(--eg-line);border-radius:14px;background:var(--eg-surface);padding:13px;display:flex;flex-direction:column;gap:9px">
+    <div style="font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--eg-muted)">Install</div>
+    <div style="font-size:10px;line-height:1.5;color:var(--eg-muted)">{{ installNote }}</div>
+    <sc-if value="{{ canInstall }}" hint-placeholder-val="{{ false }}">
+    <button onClick="{{ install }}" style="min-height:44px;border-radius:11px;border:1px solid var(--eg-accent);background:var(--eg-accent);color:var(--eg-accent-ink);font-family:Inter,system-ui,sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" style-hover="background:var(--eg-accent-brand)"><i class="ph ph-download-simple" style="font-size:15px"></i>Install Grid Balance</button>
+    </sc-if>
+  </div>
+
+  <div style="border:1px solid var(--eg-line);border-radius:14px;background:var(--eg-bg2);padding:13px;display:flex;flex-direction:column;gap:7px">
+    <div style="font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--eg-muted)">Data</div>
+    <div style="display:flex;align-items:center;gap:9px">
+      <div style="flex:1;font-size:11.5px;font-weight:600">{{ liveLabel }}</div>
+      <button onClick="{{ refetch }}" style="min-height:38px;padding:0 12px;border-radius:9px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-muted);font-family:Inter,system-ui,sans-serif;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px" style-hover="border-color:var(--eg-accent);color:var(--eg-accent)"><i class="ph ph-arrows-clockwise" style="font-size:13px"></i>Retry live</button>
+    </div>
+    <div style="font-size:9.5px;line-height:1.5;color:var(--eg-muted)">{{ dataNote }}</div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+
+<div class="eg-bottomtabs" style="flex:none;display:flex;gap:2px;padding:5px 5px max(9px,env(safe-area-inset-bottom));background:var(--eg-bg2);border-top:1px solid var(--eg-line)">
+  <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+    <button onClick="{{ t.onSelect }}" style="{{ t.style }}" style-hover="background:var(--eg-surface)">
+      <i class="ph {{ t.icon }}" style="font-size:18px"></i>
+      <span style="font-size:9px;font-weight:600;letter-spacing:.02em;white-space:nowrap">{{ t.label }}</span>
+    </button>
+  </sc-for>
+</div>
+
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;left:16px;right:16px;bottom:96px;z-index:90;padding:11px 13px;border-radius:12px;background:var(--eg-surface2);border:1px solid var(--eg-accent);display:flex;align-items:center;gap:9px;animation:eg-rise .22s ease">
+  <i class="ph ph-check-circle" style="font-size:16px;color:var(--eg-accent)"></i>
+  <div style="flex:1;font-size:11.5px;line-height:1.4">{{ toast }}</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ chartOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSheets }}" class="eg-ovl" style="position:absolute;inset:0;z-index:100;background:var(--eg-scrim);display:flex;flex-direction:column;justify-content:flex-end;animation:eg-fade .18s ease">
+  <div onClick="{{ stop }}" class="eg-sheet" style="background:var(--eg-surface);border-top:1px solid var(--eg-line);border-radius:20px 20px 0 0;padding:12px 16px 42px;max-height:82%;overflow:auto;animation:eg-rise .26s cubic-bezier(.2,.9,.2,1)">
+    <div class="eg-grab" style="width:38px;height:4px;border-radius:99px;background:var(--eg-line);margin:0 auto 12px"></div>
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:16px;font-weight:600;letter-spacing:-.02em">{{ openChart.label }}</div>
+        <div style="font-size:10px;color:var(--eg-muted);margin-top:2px">{{ openChart.about }}</div>
+      </div>
+      <button onClick="{{ closeSheets }}" style="width:34px;height:34px;flex:none;border-radius:10px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-muted);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--eg-accent);color:var(--eg-accent)"><i class="ph ph-x" style="font-size:14px"></i></button>
+    </div>
+
+    <sc-if value="{{ openChart.isSeries }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:baseline;gap:5px">
+        <span style="{{ openChart.bigStyle }}">{{ openChart.nowValue }}</span>
+        <span style="font-size:12px;color:var(--eg-muted)">{{ openChart.unit }}</span>
+        <span style="{{ openChart.sheetDeltaStyle }}">{{ openChart.delta }} vs 1 h ago</span>
+      </div>
+      <div style="font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--eg-muted)">{{ openChart.rangeLabel }}</div>
+      <div style="border:1px solid var(--eg-line);border-radius:12px;background:var(--eg-bg2);padding:10px 10px 8px">
+        <svg viewBox="0 0 320 152" preserveAspectRatio="none" style="width:100%;height:170px;display:block">
+          <line x1="0" y1="38" x2="320" y2="38" style="stroke:var(--eg-line-soft);stroke-width:1"></line>
+          <line x1="0" y1="76" x2="320" y2="76" style="stroke:var(--eg-line-soft);stroke-width:1"></line>
+          <line x1="0" y1="114" x2="320" y2="114" style="stroke:var(--eg-line-soft);stroke-width:1"></line>
+          <path d="{{ openChart.detailArea }}" style="{{ openChart.areaStyle }}"></path>
+          <path d="{{ openChart.detailLine }}" style="{{ openChart.detailLineStyle }}"></path>
+        </svg>
+        <div style="display:flex;justify-content:space-between;margin-top:6px">
+          <sc-for list="{{ openChart.axis }}" as="x" hint-placeholder-count="5">
+            <span style="font-size:9px;color:var(--eg-muted)">{{ x.label }}</span>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+        <sc-for list="{{ openChart.stats }}" as="st" hint-placeholder-count="4">
+          <div style="border:1px solid var(--eg-line);border-radius:10px;padding:8px 9px">
+            <div style="font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--eg-muted)">{{ st.label }}</div>
+            <div style="font-size:14px;font-weight:600;letter-spacing:-.02em">{{ st.value }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="font-size:10px;line-height:1.5;color:var(--eg-muted)">{{ openChart.footer }}</div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ openChart.isMix }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <sc-for list="{{ mix }}" as="m" hint-placeholder-count="6">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;align-items:baseline;gap:7px">
+            <div style="{{ m.dotStyleLg }}"></div>
+            <div style="flex:1;font-size:11.5px;font-weight:500">{{ m.label }}</div>
+            <div style="font-size:11.5px;font-weight:600">{{ m.pctLabel }}</div>
+            <div style="font-size:10px;color:var(--eg-muted);min-width:62px;text-align:right">{{ m.mwLabel }}</div>
+          </div>
+          <div style="height:7px;border-radius:99px;background:var(--eg-line-soft);overflow:hidden">
+            <div style="{{ m.barStyle }}"></div>
+          </div>
+        </div>
+      </sc-for>
+      <div style="font-size:10px;line-height:1.5;color:var(--eg-muted);margin-top:2px">{{ openChart.footer }}</div>
+    </div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ hallOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSheets }}" class="eg-ovl" style="position:absolute;inset:0;z-index:100;background:var(--eg-scrim);display:flex;flex-direction:column;justify-content:flex-end;animation:eg-fade .18s ease">
+  <div onClick="{{ stop }}" class="eg-sheet" style="background:var(--eg-surface);border-top:1px solid var(--eg-line);border-radius:20px 20px 0 0;padding:12px 16px 42px;max-height:86%;overflow:auto;animation:eg-rise .26s cubic-bezier(.2,.9,.2,1)">
+    <div class="eg-grab" style="width:38px;height:4px;border-radius:99px;background:var(--eg-line);margin:0 auto 12px"></div>
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:13px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:16px;font-weight:600;letter-spacing:-.02em">{{ openHall.name }}</div>
+        <div style="font-size:10px;color:var(--eg-muted);margin-top:2px">{{ openHall.sub }}</div>
+      </div>
+      <button onClick="{{ closeSheets }}" style="width:34px;height:34px;flex:none;border-radius:10px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-muted);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--eg-accent);color:var(--eg-accent)"><i class="ph ph-x" style="font-size:14px"></i></button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="border:1px solid var(--eg-line);border-radius:12px;background:var(--eg-bg2);padding:11px">
+        <div style="display:flex;align-items:baseline;gap:5px">
+          <span style="font-size:30px;font-weight:600;letter-spacing:-.035em">{{ openHall.usage }}</span>
+          <span style="font-size:12px;color:var(--eg-muted)">{{ unit }} draw</span>
+          <span style="{{ openHall.sourceStyle }}">{{ openHall.source }}</span>
+        </div>
+        <svg viewBox="0 0 320 54" preserveAspectRatio="none" style="width:100%;height:54px;display:block;margin-top:8px">
+          <path d="{{ openHall.area }}" style="{{ openHall.areaStyle }}"></path>
+          <path d="{{ openHall.line }}" style="{{ openHall.lineStyle }}"></path>
+        </svg>
+        <div style="font-size:9px;color:var(--eg-muted);margin-top:4px">24 h draw, shaped by all-island demand</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--eg-muted)">Priority</div>
+        <div style="display:flex;gap:7px">
+          <sc-for list="{{ openHall.prioOptions }}" as="p" hint-placeholder-count="3">
+            <button onClick="{{ p.onPick }}" style="{{ p.style }}" style-hover="border-color:var(--eg-accent)">{{ p.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--eg-muted)">Power draw</div>
+        <div style="display:flex;align-items:center;gap:9px">
+          <button onClick="{{ openHall.usageDown }}" style="width:44px;height:44px;border-radius:11px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-text);font-size:18px;cursor:pointer">−</button>
+          <div style="flex:1;text-align:center;font-size:15px;font-weight:600">{{ openHall.usageLabel }}</div>
+          <button onClick="{{ openHall.usageUp }}" style="width:44px;height:44px;border-radius:11px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-text);font-size:18px;cursor:pointer">+</button>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--eg-line);border-radius:12px;padding:11px;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <div style="flex:1;font-size:11px;color:var(--eg-muted)">Grid value right now</div>
+          <div style="{{ openHall.costStyle }}">{{ openHall.costLabel }}</div>
+        </div>
+        <div style="font-size:10px;line-height:1.5;color:var(--eg-muted)">{{ openHall.costNote }}</div>
+      </div>
+
+      <button onClick="{{ openHall.toggleSource }}" style="min-height:46px;border-radius:11px;border:1px solid var(--eg-accent);background:var(--eg-accent-soft);color:var(--eg-accent);font-family:Inter,system-ui,sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" style-hover="background:var(--eg-accent);color:var(--eg-accent-ink)"><i class="ph {{ openHall.toggleIcon }}" style="font-size:16px"></i>{{ openHall.toggleLabel }}</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ scheduleOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeSheets }}" class="eg-ovl" style="position:absolute;inset:0;z-index:100;background:var(--eg-scrim);display:flex;flex-direction:column;justify-content:flex-end;animation:eg-fade .18s ease">
+  <div onClick="{{ stop }}" class="eg-sheet" style="background:var(--eg-surface);border-top:1px solid var(--eg-line);border-radius:20px 20px 0 0;padding:12px 16px 42px;max-height:86%;overflow:auto;animation:eg-rise .26s cubic-bezier(.2,.9,.2,1)">
+    <div class="eg-grab" style="width:38px;height:4px;border-radius:99px;background:var(--eg-line);margin:0 auto 12px"></div>
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:13px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:16px;font-weight:600;letter-spacing:-.02em">Best windows, next 24 h</div>
+        <div style="font-size:10px;color:var(--eg-muted);margin-top:2px">{{ scheduleNote }}</div>
+      </div>
+      <button onClick="{{ closeSheets }}" style="width:34px;height:34px;flex:none;border-radius:10px;border:1px solid var(--eg-line);background:transparent;color:var(--eg-muted);cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="border-color:var(--eg-accent);color:var(--eg-accent)"><i class="ph ph-x" style="font-size:14px"></i></button>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:2px;height:120px;padding:0 0 4px;border-bottom:1px solid var(--eg-line)">
+      <sc-for list="{{ scheduleHours }}" as="h" hint-placeholder-count="24">
+        <div onClick="{{ h.onPick }}" style="flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:3px;cursor:pointer">
+          <div style="{{ h.barStyle }}"></div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin:5px 0 13px">
+      <sc-for list="{{ scheduleAxis }}" as="x" hint-placeholder-count="5">
+        <span style="font-size:9px;color:var(--eg-muted)">{{ x.label }}</span>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{ bestWindows }}" as="b" hint-placeholder-count="3">
+        <div onClick="{{ b.onPick }}" style="{{ b.style }}" style-hover="border-color:var(--eg-accent)">
+          <div style="font-size:15px;font-weight:600;letter-spacing:-.02em;min-width:52px">{{ b.hourLabel }}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:11px;font-weight:600">{{ b.title }}</div>
+            <div style="font-size:9.5px;color:var(--eg-muted)">{{ b.detail }}</div>
+          </div>
+          <i class="ph ph-arrow-right" style="font-size:14px;color:var(--eg-accent)"></i>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font-size:10px;line-height:1.5;color:var(--eg-muted);margin-top:11px">Tap an hour to re-solve the allocation at that time. Hard windows follow the rules set in Settings.</div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:460,&quot;height&quot;:920}}">
+const PRIO = { HIGH: 12, MEDIUM: 5, LOW: 2 };
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const HOURLY = [3900,3750,3680,3650,3700,3850,4200,4700,5000,5100,5100,5080,5050,5000,4950,4950,5050,5350,5500,5400,5150,4900,4600,4200];
+
+const THEMES = {
+  nocturne: {
+    '--eg-bg': '#0f1a1e', '--eg-bg2': '#13252a', '--eg-surface': '#16262c', '--eg-surface2': '#1b2f36',
+    '--eg-line': 'rgba(198,232,223,.14)', '--eg-line-soft': 'rgba(198,232,223,.07)',
+    '--eg-text': '#e8f1ee', '--eg-muted': '#94ada8',
+    '--eg-accent': '#2ec4a8', '--eg-accent-brand': '#009982', '--eg-accent-ink': '#03211c',
+    '--eg-accent-soft': 'rgba(46,196,168,.14)',
+    '--eg-blue': '#57b6ea', '--eg-amber': '#e8a33d', '--eg-yellow': '#e9c65a', '--eg-violet': '#9184d9',
+    '--eg-red': '#e57468', '--eg-good': '#3fc48f', '--eg-scrim': 'rgba(5,12,14,.66)', '--color-accent': '#2ec4a8'
+  },
+  organic: {
+    '--eg-bg': '#f6f2e8', '--eg-bg2': '#fffdf6', '--eg-surface': '#fffdf8', '--eg-surface2': '#fffefb',
+    '--eg-line': 'rgba(18,46,42,.16)', '--eg-line-soft': 'rgba(18,46,42,.08)',
+    '--eg-text': '#122e2a', '--eg-muted': '#546965',
+    '--eg-accent': '#00806d', '--eg-accent-brand': '#009982', '--eg-accent-ink': '#ffffff',
+    '--eg-accent-soft': 'rgba(0,153,130,.12)',
+    '--eg-blue': '#1d6d99', '--eg-amber': '#8d5a17', '--eg-yellow': '#73590f', '--eg-violet': '#544ba0',
+    '--eg-red': '#a03c32', '--eg-good': '#176f4d', '--eg-scrim': 'rgba(38,48,45,.42)', '--color-accent': '#00806d'
+  }
+};
+
+class Component extends DCLogic {
+  state = {
+    theme: 'nocturne', tab: 'home',
+    openChart: null, openHall: null, sheet: null, toast: null,
+    target: 15, planHour: null, plan: null,
+    clusterLimit: 65, dcLimit: 25, genLimit: 15,
+    request: { siteId: null, kw: 20 },
+    now: new Date(), live: false, loading: true,
+    note: 'Loading EirGrid real time system information…',
+    data: null,
+    windows: [
+      { id: 'w1', label: 'Night trough', from: 0, to: 6, mult: 0.6 },
+      { id: 'w2', label: 'Morning ramp', from: 6, to: 10, mult: 2 },
+      { id: 'w3', label: 'Daytime', from: 10, to: 17, mult: 1 },
+      { id: 'w4', label: 'Evening peak', from: 17, to: 20, mult: 1.8 },
+      { id: 'w5', label: 'Wind-down', from: 20, to: 24, mult: 0.8 }
+    ],
+    sites: [
+      { id: 's1', name: 'Datacentre 1', halls: [
+        { id: 's1h1', name: 'Hall 1', usage: 5, priority: 'HIGH', source: 'GRID', profile: 'business' },
+        { id: 's1h2', name: 'Hall 2', usage: 3, priority: 'LOW', source: 'GENERATOR', profile: 'batch' },
+        { id: 's1h3', name: 'Hall 3', usage: 2, priority: 'MEDIUM', source: 'GRID', profile: 'business' },
+        { id: 's1h4', name: 'Hall 4', usage: 1, priority: 'LOW', source: 'GENERATOR', profile: 'batch' },
+        { id: 's1h5', name: 'Hall 5', usage: 7, priority: 'LOW', source: 'GENERATOR', profile: 'batch' },
+        { id: 's1h6', name: 'Hall 6', usage: 10, priority: 'HIGH', source: 'GRID', profile: 'business' }
+      ] },
+      { id: 's2', name: 'Datacentre 2', halls: [
+        { id: 's2h1', name: 'Hall 1', usage: 6, priority: 'MEDIUM', source: 'GRID', profile: 'batch' },
+        { id: 's2h2', name: 'Hall 2', usage: 4, priority: 'HIGH', source: 'GRID', profile: 'business' },
+        { id: 's2h3', name: 'Hall 3', usage: 9, priority: 'LOW', source: 'GRID', profile: 'batch' },
+        { id: 's2h4', name: 'Hall 4', usage: 2, priority: 'MEDIUM', source: 'GENERATOR', profile: 'business' },
+        { id: 's2h5', name: 'Hall 5', usage: 8, priority: 'MEDIUM', source: 'GRID', profile: 'business' },
+        { id: 's2h6', name: 'Hall 6', usage: 3, priority: 'LOW', source: 'GRID', profile: 'batch' }
+      ] },
+      { id: 's3', name: 'Datacentre 3', halls: [
+        { id: 's3h1', name: 'Hall 1', usage: 12, priority: 'HIGH', source: 'GRID', profile: 'business' },
+        { id: 's3h2', name: 'Hall 2', usage: 2, priority: 'LOW', source: 'GRID', profile: 'batch' },
+        { id: 's3h3', name: 'Hall 3', usage: 5, priority: 'MEDIUM', source: 'GRID', profile: 'batch' },
+        { id: 's3h4', name: 'Hall 4', usage: 6, priority: 'LOW', source: 'GRID', profile: 'business' },
+        { id: 's3h5', name: 'Hall 5', usage: 1, priority: 'LOW', source: 'GENERATOR', profile: 'batch' },
+        { id: 's3h6', name: 'Hall 6', usage: 4, priority: 'MEDIUM', source: 'GRID', profile: 'business' }
+      ] }
+    ],
+    log: []
+  };
+
+  componentDidMount() {
+    this.setState({ data: this.snapshot(new Date()), loading: false, note: 'Reaching the EirGrid feed…' }, () => this.tryLive());
+    this.tick = setInterval(() => this.setState({ now: new Date() }), 30000);
+    this.feed = setInterval(() => { this.state.live ? this.tryLive() : this.advance(); }, 15 * 60000);
+    this.onBip = e => { e.preventDefault(); this.deferred = e; this.setState({ canInstall: true }); };
+    window.addEventListener('beforeinstallprompt', this.onBip);
+    if (window.__egInstallEvent) { this.deferred = window.__egInstallEvent; this.setState({ canInstall: true }); }
+  }
+  componentDidUpdate(pp, ps) {
+    if (ps && ps.theme !== this.state.theme) {
+      const m = document.querySelector('meta[name="theme-color"]');
+      if (m) m.setAttribute('content', this.state.theme === 'organic' ? '#fffdf6' : '#13252a');
+    }
+  }
+  componentWillUnmount() { window.removeEventListener('beforeinstallprompt', this.onBip); clearInterval(this.tick); clearInterval(this.feed); if (this.toastT) clearTimeout(this.toastT); }
+
+  // ── data ──────────────────────────────────────────────────────────
+  // one 15-minute settlement period, from the EirGrid-shaped model
+  sample(d, st) {
+    const rnd = () => { st.seed = (st.seed * 1103515245 + 12345) & 0x7fffffff; return st.seed / 0x7fffffff; };
+    const h = d.getHours() + d.getMinutes() / 60, fh = Math.floor(h);
+    const a = HOURLY[fh % 24], b = HOURLY[(fh + 1) % 24];
+    const demand = Math.round(a + (b - a) * (h - fh) + (rnd() - 0.5) * 70);
+    st.drift += (rnd() - 0.5) * 70; st.drift = Math.max(-150, Math.min(150, st.drift));
+    st.w = Math.max(240, Math.min(4300, st.w + st.drift));
+    const wind = Math.round(st.w);
+    const sun = Math.max(0, Math.sin((h - 6.4) / 12.2 * Math.PI));
+    const solar = Math.round(sun * sun * 620 * (0.75 + rnd() * 0.3));
+    const clean = (wind + solar) / demand;
+    return {
+      demand, wind, solar,
+      co2: Math.round(Math.max(140, Math.min(470, 470 - clean * 430)) + (rnd() - 0.5) * 14),
+      ic: Math.round((clean - 0.42) * -1350 + (rnd() - 0.5) * 150)
+    };
+  }
+
+  snapshot(now) {
+    const N = 96, step = 15 * 60000;
+    const t0 = Math.floor(now.getTime() / step) * step - (N - 1) * step;
+    const st = { seed: 20260908, drift: 0, w: 0 };
+    st.w = 900 + (st.seed = (st.seed * 1103515245 + 12345) & 0x7fffffff, st.seed / 0x7fffffff) * 2200;
+    const keys = ['demand', 'wind', 'solar', 'co2', 'ic'];
+    const out = {}; keys.forEach(k => { out[k] = { times: [], values: [] }; });
+    for (let i = 0; i < N; i++) {
+      const d = new Date(t0 + i * step), s = this.sample(d, st);
+      keys.forEach(k => { out[k].times.push(d); out[k].values.push(s[k]); });
+    }
+    this.gen = st;
+    return out;
+  }
+
+  // append the next 15-minute period, dropping the oldest, so the charts advance
+  advance() {
+    this.setState(s => {
+      if (!s.data || s.live) return null;
+      const step = 15 * 60000;
+      const last = s.data.demand.times[s.data.demand.times.length - 1];
+      const d = new Date(last.getTime() + step);
+      if (d.getTime() > Date.now()) return null;
+      const smp = this.sample(d, this.gen || (this.gen = { seed: 20260908, drift: 0, w: 2000 }));
+      const out = {};
+      Object.keys(s.data).forEach(k => {
+        out[k] = { times: s.data[k].times.slice(1).concat([d]), values: s.data[k].values.slice(1).concat([smp[k]]) };
+      });
+      return { data: out, lastTick: d };
+    });
+  }
+
+  async tryLive() {
+    const p = n => String(n).padStart(2, '0');
+    const f = d => p(d.getDate()) + '-' + MONTHS[d.getMonth()] + '-' + d.getFullYear() + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+    const to = new Date(), from = new Date(to.getTime() - 24 * 3600e3);
+    const get = async area => {
+      const c = new AbortController(); const t = setTimeout(() => c.abort(), 6000);
+      try {
+        const r = await fetch('https://www.smartgriddashboard.com/DashboardService.svc/data?area=' + area + '&region=ALL&datefrom=' + encodeURIComponent(f(from)) + '&dateto=' + encodeURIComponent(f(to)), { signal: c.signal });
+        const j = await r.json();
+        const rows = (j.Rows || []).filter(x => x.Value !== null && x.Value !== undefined);
+        return { times: rows.map(x => new Date(String(x.EffectiveTime).replace(/-/g, ' '))), values: rows.map(x => Number(x.Value)) };
+      } finally { clearTimeout(t); }
+    };
+    try {
+      const [demand, wind, solar, co2, ic] = await Promise.all(['demandactual', 'windactual', 'solaractual', 'co2intensity', 'interconnection'].map(get));
+      if (!demand.values.length) throw new Error('empty');
+      this.setState({ live: true, data: { demand, wind, solar, co2, ic }, note: 'Live from the EirGrid Smart Grid Dashboard service, all-island region, refreshed every 15 minutes.' });
+    } catch (e) {
+      this.setState({ live: false, note: 'The charts run on a bundled snapshot with the real all-island shape, advancing one 15 minute settlement period at a time: demand 3.6–5.5 GW, wind up to 4.3 GW, carbon 140–470 g/kWh. Everything else in the app is live logic.' });
+    }
+  }
+
+  // ── helpers ───────────────────────────────────────────────────────
+  factorFor(hour) {
+    const w = this.state.windows.find(x => hour >= x.from && hour < x.to);
+    return w ? w.mult : 1;
+  }
+  windowFor(hour) { return this.state.windows.find(x => hour >= x.from && hour < x.to) || null; }
+  costOf(hall, hour) {
+    const base = PRIO[hall.priority] || 5;
+    return hall.profile === 'batch' ? base * 0.6 : base * this.factorFor(hour);
+  }
+  allHalls() {
+    const out = [];
+    this.state.sites.forEach(s => s.halls.forEach(h => out.push(Object.assign({}, h, { site: s.name, siteId: s.id }))));
+    return out;
+  }
+  gridLoad() { return this.allHalls().filter(h => h.source === 'GRID').reduce((a, h) => a + h.usage, 0); }
+  genLoad() { return this.allHalls().filter(h => h.source === 'GENERATOR').reduce((a, h) => a + h.usage, 0); }
+
+  hallValue(h, hour) {
+    const base = PRIO[h.priority] || 5;
+    const v = h.profile === 'batch' ? base * 0.6 : base * this.factorFor(hour);
+    return v + (h.source === 'GRID' ? 0.15 : 0);
+  }
+
+  // 0/1 knapsack inside one datacentre: best priority value for every exact grid load
+  siteKnapsack(halls, cap, hour) {
+    const n = halls.length, dp = [];
+    for (let i = 0; i <= n; i++) dp.push(new Array(cap + 1).fill(-1));
+    dp[0][0] = 0;
+    for (let i = 0; i < n; i++) {
+      const u = halls[i].usage, v = this.hallValue(halls[i], hour);
+      for (let w = 0; w <= cap; w++) {
+        if (dp[i][w] < 0) continue;
+        if (dp[i][w] > dp[i + 1][w]) dp[i + 1][w] = dp[i][w];
+        if (w + u <= cap && dp[i][w] + v > dp[i + 1][w + u]) dp[i + 1][w + u] = dp[i][w] + v;
+      }
+    }
+    const out = [];
+    for (let w = 0; w <= cap; w++) {
+      if (dp[n][w] < 0) { out.push(null); continue; }
+      const ids = []; let ww = w;
+      for (let i = n; i > 0; i--) {
+        const u = halls[i - 1].usage, v = this.hallValue(halls[i - 1], hour);
+        if (ww - u >= 0 && dp[i - 1][ww - u] >= 0 && Math.abs(dp[i][ww] - (dp[i - 1][ww - u] + v)) < 1e-9) { ids.push(halls[i - 1].id); ww -= u; }
+      }
+      out.push({ w, value: dp[n][w], ids });
+    }
+    return out;
+  }
+
+  // nested fill: per-datacentre bags inside the cluster bag, cluster headroom allocated freely
+  solveFill(hour, req, over) {
+    const S = this.state;
+    const dcCap = (over && over.dcLimit) || S.dcLimit;
+    const cCap = (over && over.clusterLimit) || S.clusterLimit;
+    const gen = (over && over.genLimit) || S.genLimit;
+    const PEN = 200;
+    const sites = S.sites.map(s => {
+      let halls = s.halls.map(h => ({ ...h, site: s.name, siteId: s.id }));
+      if (req && req.siteId === s.id && req.kw > 0)
+        halls = halls.concat([{ id: s.id + '-req', name: 'Requested load', usage: req.kw, priority: 'HIGH', profile: 'business', source: 'REQUEST', isRequest: true, site: s.name, siteId: s.id }]);
+      const installed = halls.reduce((a, h) => a + h.usage, 0);
+      return { id: s.id, name: s.name, halls, installed, cap: Math.min(dcCap, installed), best: this.siteKnapsack(halls, Math.min(dcCap, installed), hour) };
+    });
+    const n = sites.length, dp = [], ch = [];
+    for (let i = 0; i <= n; i++) { dp.push(new Array(cCap + 1).fill(-Infinity)); ch.push(new Array(cCap + 1).fill(-1)); }
+    dp[0][cCap] = 0;
+    for (let i = 0; i < n; i++) {
+      const st = sites[i];
+      for (let r = 0; r <= cCap; r++) {
+        if (dp[i][r] === -Infinity) continue;
+        for (let w = 0; w < st.best.length; w++) {
+          const b = st.best[w];
+          if (!b || w > r) continue;
+          const val = dp[i][r] + b.value - Math.max(0, st.installed - w - gen) * PEN;
+          if (val > dp[i + 1][r - w]) { dp[i + 1][r - w] = val; ch[i + 1][r - w] = w; }
+        }
+      }
+    }
+    let rBest = 0, vBest = -Infinity;
+    for (let r = 0; r <= cCap; r++) if (dp[n][r] > vBest) { vBest = dp[n][r]; rBest = r; }
+    const ws = []; let r = rBest;
+    for (let i = n; i > 0; i--) { const w = ch[i][r]; ws.unshift(w < 0 ? 0 : w); r += (w < 0 ? 0 : w); }
+    let captured = 0, switches = 0, gridTotal = 0, unservedAll = [];
+    const result = sites.map((st, i) => {
+      const w = ws[i], b = st.best[w], gridIds = b ? b.ids : [];
+      const onGrid = st.halls.filter(h => gridIds.indexOf(h.id) > -1);
+      const off = st.halls.filter(h => gridIds.indexOf(h.id) < 0).sort((a, c) => this.hallValue(c, hour) - this.hallValue(a, hour));
+      let genUsed = 0; const onGen = [], unserved = [];
+      off.forEach(h => { if (genUsed + h.usage <= gen) { genUsed += h.usage; onGen.push(h); } else unserved.push(h); });
+      captured += onGrid.reduce((a, h) => a + this.hallValue(h, hour), 0);
+      gridTotal += w;
+      st.halls.forEach(h => {
+        if (h.isRequest) return;
+        const next = gridIds.indexOf(h.id) > -1 ? 'GRID' : (unserved.indexOf(h) > -1 ? 'UNSERVED' : 'GENERATOR');
+        if (next !== h.source) switches++;
+      });
+      unservedAll = unservedAll.concat(unserved);
+      return { id: st.id, name: st.name, halls: st.halls, installed: st.installed, w, cap: st.cap, onGrid, onGen, unserved, genUsed, gridIds };
+    });
+    let reqHall = null;
+    result.forEach(st => st.halls.forEach(h => { if (h.isRequest) reqHall = h; }));
+    const reqServed = !!(reqHall && result.some(st => st.gridIds.indexOf(reqHall.id) > -1));
+    return { hour, sites: result, captured, switches, gridTotal, clusterCap: cCap, dcCap, gen, unserved: unservedAll, reqHall, reqServed };
+  }
+
+  // smallest single-lever capacity increase that serves every hall
+  minFix(hour, req) {
+    const levers = [
+      { key: 'clusterLimit', label: 'cluster firm capacity' },
+      { key: 'dcLimit', label: 'per-datacentre limit' },
+      { key: 'genLimit', label: 'generator capacity' }
+    ];
+    let best = null;
+    levers.forEach(lv => {
+      for (let add = 1; add <= 30; add++) {
+        const over = {}; over[lv.key] = this.state[lv.key] + add;
+        if (this.solveFill(hour, req, over).unserved.length === 0) {
+          if (!best || add < best.add) best = { add, label: lv.label, key: lv.key };
+          break;
+        }
+      }
+    });
+    return best;
+  }
+
+  showToast(msg) {
+    if (this.toastT) clearTimeout(this.toastT);
+    this.setState({ toast: msg });
+    this.toastT = setTimeout(() => this.setState({ toast: null }), 3200);
+  }
+  patchHall(id, patch) {
+    this.setState(s => ({ sites: s.sites.map(si => ({ ...si, halls: si.halls.map(h => h.id === id ? { ...h, ...patch } : h) })), plan: null }));
+  }
+
+  path(values, w, h) {
+    if (!values || values.length < 2) return { line: '', area: '' };
+    const min = Math.min(...values), max = Math.max(...values), r = (max - min) || 1;
+    const pts = values.map((v, i) => [(i / (values.length - 1)) * w, h - 1 - ((v - min) / r) * (h - 3)]);
+    const line = 'M' + pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L ');
+    return { line, area: line + ' L ' + w + ' ' + h + ' L 0 ' + h + ' Z', min, max };
+  }
+  hm(d) { const p = n => String(n).padStart(2, '0'); return p(d.getHours()) + ':' + p(d.getMinutes()); }
+  n0(v) { return Math.round(v).toLocaleString('en-IE'); }
+
+  renderVals() {
+    const S = this.state, hour = S.planHour === null ? S.now.getHours() : S.planHour;
+    const D = S.data;
+    const unit = 'kW';
+    const T = {
+      HIGH: { color: 'var(--eg-red)', bg: 'rgba(229,116,104,.14)' },
+      MEDIUM: { color: 'var(--eg-amber)', bg: 'rgba(232,163,61,.14)' },
+      LOW: { color: 'var(--eg-good)', bg: 'rgba(63,196,143,.14)' }
+    };
+    const CHIP = { fontSize: '9px', fontWeight: 700, letterSpacing: '.05em', padding: '3px 7px', borderRadius: '999px', flex: 'none' };
+    const BTN = { fontFamily: 'Inter,system-ui,sans-serif', cursor: 'pointer', border: '1px solid var(--eg-line)', background: 'transparent' };
+    const prioStyle = p => ({ ...CHIP, color: T[p].color, background: T[p].bg });
+    const sourceStyle = s => ({ ...CHIP, fontWeight: 600, letterSpacing: '.04em',
+      ...(s === 'GRID' ? { color: 'var(--eg-accent)', background: 'var(--eg-accent-soft)' }
+        : s === 'UNSERVED' ? { color: 'var(--eg-red)', background: 'rgba(229,116,104,.14)' }
+        : { color: 'var(--eg-muted)', background: 'var(--eg-line-soft)' }) });
+    const stateStyle = s => sourceStyle(s === 'GEN' ? 'GENERATOR' : s);
+
+    // ── series charts ──
+    const meta = [
+      { key: 'demand', label: 'System Demand', unit: 'MW', c: 'var(--eg-accent)', about: 'The electricity production needed to meet national consumption.', dec: 0 },
+      { key: 'wind', label: 'Wind Generation', unit: 'MW', c: 'var(--eg-blue)', about: 'Estimated total output of all wind farms on the system.', dec: 0 },
+      { key: 'co2', label: 'CO₂ Intensity', unit: 'g/kWh', c: 'var(--eg-amber)', about: 'Average CO₂ released per unit of electricity produced.', dec: 0 },
+      { key: 'solar', label: 'Solar Generation', unit: 'MW', c: 'var(--eg-yellow)', about: 'Output of large scale solar farms. Small embedded solar is not included.', dec: 0 },
+      { key: 'ic', label: 'Interconnection', unit: 'MW', c: 'var(--eg-violet)', about: 'Flow to and from Wales (EWIC, Greenlink) and Scotland (Moyle). Negative is export.', dec: 0 }
+    ];
+    const footer = S.live
+      ? 'Source: EirGrid Smart Grid Dashboard, all-island, 15 minute resolution.'
+      : 'Bundled EirGrid-shaped snapshot — the live feed blocks browser requests. Retry from Settings.';
+    const WIN = 16; // 16 periods of 15 minutes = the last 4 hours
+    const charts = !D ? [] : meta.map(m => {
+      const v = D[m.key].values, t = D[m.key].times;
+      const vw = v.slice(-WIN), tw = t.slice(-WIN);
+      const sp = this.path(vw, 160, 42), dt = this.path(v, 320, 152);
+      const now = v[v.length - 1], prev = v[Math.max(0, v.length - 5)];
+      const diff = now - prev;
+      const avg = v.reduce((a, x) => a + x, 0) / v.length;
+      const axis = [0, 0.25, 0.5, 0.75, 1].map(f => ({ label: this.hm(t[Math.min(v.length - 1, Math.round(f * (v.length - 1)))]) }));
+      const stepMin = t.length > 1 ? Math.round((t[t.length - 1] - t[t.length - 2]) / 60000) : 15;
+      return {
+        key: m.key, label: m.label, unit: m.unit, about: m.about, footer,
+        nowValue: this.n0(now), delta: (diff >= 0 ? '+' : '−') + this.n0(Math.abs(diff)),
+        deltaStyle: { fontSize: '9.5px', marginLeft: 'auto', color: 'var(--eg-muted)' },
+        sheetDeltaStyle: { fontSize: '11px', marginLeft: '6px', color: 'var(--eg-muted)' },
+        sparkLine: sp.line, sparkArea: sp.area, detailLine: dt.line, detailArea: dt.area,
+        lineStyle: { fill: 'none', stroke: m.c, strokeWidth: 1.7, strokeLinejoin: 'round', strokeLinecap: 'round' },
+        detailLineStyle: { fill: 'none', stroke: m.c, strokeWidth: 2.1, strokeLinejoin: 'round', strokeLinecap: 'round' },
+        areaStyle: { fill: m.c, opacity: 0.13, stroke: 'none' },
+        bigStyle: { fontSize: '34px', fontWeight: 600, letterSpacing: '-.035em', color: m.c }, axis,
+        isSeries: true, isMix: false,
+        stats: [
+          { label: 'Now', value: this.n0(now) },
+          { label: 'Min', value: this.n0(Math.min(...v)) },
+          { label: 'Avg', value: this.n0(avg) },
+          { label: 'Max', value: this.n0(Math.max(...v)) }
+        ],
+        windowLabel: 'last 4 h · ' + this.hm(tw[0]) + '–' + this.hm(tw[tw.length - 1]) + ' · tap to expand',
+        rangeLabel: 'Full 24 h · ' + stepMin + ' min periods · ' + this.hm(t[0]) + ' – ' + this.hm(t[t.length - 1]),
+        onOpen: () => this.setState({ openChart: m.key })
+      };
+    });
+
+    // ── fuel mix ──
+    let mix = [];
+    if (D) {
+      const dem = D.demand.values[D.demand.values.length - 1];
+      const windNow = D.wind.values[D.wind.values.length - 1];
+      const solarNow = D.solar.values[D.solar.values.length - 1];
+      const icNow = D.ic.values[D.ic.values.length - 1];
+      const imp = Math.max(0, icNow);
+      const other = Math.round(dem * 0.07);
+      const coal = Math.round(dem * 0.02);
+      const gas = Math.max(0, Math.round(dem - windNow - solarNow - imp - other - coal));
+      const raw = [
+        { label: 'Gas', mw: gas, c: 'var(--eg-accent)' },
+        { label: 'Wind', mw: windNow, c: 'var(--eg-blue)' },
+        { label: 'Net imports', mw: imp, c: 'var(--eg-violet)' },
+        { label: 'Other renewables', mw: other, c: 'var(--eg-good)' },
+        { label: 'Solar', mw: solarNow, c: 'var(--eg-yellow)' },
+        { label: 'Coal & peat', mw: coal, c: 'var(--eg-amber)' }
+      ];
+      const tot = raw.reduce((a, x) => a + x.mw, 0) || 1;
+      mix = raw.map(x => {
+        const pct = x.mw / tot * 100;
+        return {
+          label: x.label, pctLabel: pct.toFixed(0) + '%', mwLabel: this.n0(x.mw) + ' MW',
+          dotStyle: { width: '7px', height: '7px', borderRadius: '2px', flex: 'none', background: x.c },
+          dotStyleLg: { width: '8px', height: '8px', borderRadius: '2px', flex: 'none', background: x.c },
+          segStyle: { width: pct + '%', height: '100%', background: x.c },
+          barStyle: { width: Math.max(1, pct) + '%', height: '100%', borderRadius: '99px', background: x.c }
+        };
+      });
+    }
+
+    // ── status ──
+    let statusLabel = 'NORMAL', statusColor = 'var(--eg-accent)';
+    let headline = [], gridLoadLabel = '—', suggestions = [], alerts = [];
+    if (D) {
+      const dv = D.demand.values, dem = dv[dv.length - 1];
+      const peak = Math.max(...dv);
+      const windNow = D.wind.values[D.wind.values.length - 1];
+      const co2Now = D.co2.values[D.co2.values.length - 1];
+      const share = windNow / dem;
+      if (dem >= peak * 0.97) { statusLabel = 'TIGHT'; statusColor = 'var(--eg-red)'; }
+      else if (co2Now > 400) { statusLabel = 'HIGH CARBON'; statusColor = 'var(--eg-amber)'; }
+      else if (share > 0.5) { statusLabel = 'WIND SURPLUS'; statusColor = 'var(--eg-good)'; }
+      const BIG = { fontSize: '21px', fontWeight: 600, letterSpacing: '-.03em' };
+      headline = [
+        { label: 'Demand', value: this.n0(dem), unit: 'MW', sub: 'peak ' + this.n0(peak), valueStyle: { ...BIG, color: 'var(--eg-text)' } },
+        { label: 'Wind', value: this.n0(windNow), unit: 'MW', sub: (share * 100).toFixed(0) + '% of demand', valueStyle: { ...BIG, color: 'var(--eg-blue)' } },
+        { label: 'Carbon', value: this.n0(co2Now), unit: 'g/kWh', sub: co2Now > 400 ? 'above target' : 'within range', valueStyle: { ...BIG, color: 'var(--eg-amber)' } }
+      ];
+      gridLoadLabel = this.gridLoad() + ' ' + unit + ' of ' + S.clusterLimit + ' ' + unit + ' firm';
+
+      const win = this.windowFor(S.now.getHours());
+      const base = [
+        dem >= peak * 0.97
+          ? { icon: 'ph-trend-up', sev: 'var(--eg-red)', title: 'Demand near daily peak', detail: 'All-island demand ' + this.n0(dem) + ' MW against a ' + this.n0(peak) + ' MW peak. Grid space is worth defending for the highest-priority halls.', time: this.hm(S.now) }
+          : { icon: 'ph-check-circle', sev: 'var(--eg-good)', title: 'Demand inside normal band', detail: 'All-island demand ' + this.n0(dem) + ' MW, ' + this.n0(peak - dem) + ' MW below today’s peak.', time: this.hm(S.now) },
+        { icon: co2Now > 400 ? 'ph-cloud' : 'ph-leaf', sev: co2Now > 400 ? 'var(--eg-amber)' : 'var(--eg-good)', title: co2Now > 400 ? 'Carbon intensity elevated' : 'Carbon intensity moderate', detail: this.n0(co2Now) + ' g/kWh on the all-island system.', time: this.hm(new Date(S.now.getTime() - 9 * 60000)) },
+        { icon: 'ph-wind', sev: 'var(--eg-blue)', title: share > 0.5 ? 'Wind covering over half of demand' : 'Wind at ' + (share * 100).toFixed(0) + '% of demand', detail: this.n0(windNow) + ' MW of wind on the system.', time: this.hm(new Date(S.now.getTime() - 21 * 60000)) },
+        { icon: 'ph-clock-countdown', sev: win && win.mult >= 1.8 ? 'var(--eg-red)' : 'var(--eg-muted)', title: win ? win.label + ' — value factor ×' + win.mult : 'No window rule', detail: win ? 'Business-hours halls are worth ' + win.mult + '× on grid between ' + String(win.from).padStart(2, '0') + ':00 and ' + String(win.to).padStart(2, '0') + ':00.' : '', time: this.hm(S.now) },
+        { icon: 'ph-plugs', sev: 'var(--eg-muted)', title: 'Generator-backed halls', detail: this.genLoad() + ' ' + unit + ' across ' + this.allHalls().filter(h => h.source === 'GENERATOR').length + ' halls currently off grid.', time: this.hm(new Date(S.now.getTime() - 42 * 60000)) }
+      ];
+      alerts = S.log.concat(base).map(a => ({ ...a, iconStyle: { width: '28px', height: '28px', borderRadius: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', background: 'var(--eg-line-soft)', color: a.sev } }));
+    }
+
+    // ── allocation (live preview) ──
+    const SITE_C = ['var(--eg-accent)', 'var(--eg-blue)', 'var(--eg-violet)', 'var(--eg-good)', 'var(--eg-yellow)'];
+    const req = S.request.siteId && S.request.kw > 0 ? S.request : null;
+    const fill = this.solveFill(hour, req);
+    const baseFill = req ? this.solveFill(hour, null) : fill;
+    const winF = this.windowFor(hour);
+    const siteColor = {};
+    S.sites.forEach((s, i) => { siteColor[s.id] = SITE_C[i % SITE_C.length]; });
+
+    const cluster = {
+      used: fill.gridTotal + ' ' + unit,
+      cap: fill.clusterCap + ' ' + unit,
+      headroom: Math.max(0, fill.clusterCap - fill.gridTotal) + ' ' + unit,
+      segments: fill.sites.filter(st => st.w > 0).map(st => ({
+        style: { width: (st.w / fill.clusterCap * 100) + '%', height: '100%', background: siteColor[st.id], borderRight: '1px solid var(--eg-bg2)' }
+      })),
+      legend: fill.sites.map(st => ({
+        label: st.name, value: st.w + ' ' + unit,
+        dotStyle: { width: '7px', height: '7px', borderRadius: '2px', flex: 'none', background: siteColor[st.id] }
+      }))
+    };
+    const STATV = { fontSize: '19px', fontWeight: 600, letterSpacing: '-.03em' };
+    const planStats = [
+      { label: 'Priority captured', value: fill.captured.toFixed(1), style: { ...STATV, color: 'var(--eg-accent)' } },
+      { label: 'Switches needed', value: String(fill.switches), style: STATV },
+      { label: 'Halls on grid', value: String(fill.sites.reduce((a, st) => a + st.onGrid.filter(h => !h.isRequest).length, 0)), style: STATV }
+    ];
+    const planNote = 'Solved for ' + String(hour).padStart(2, '0') + ':00 — ' + (winF ? winF.label.toLowerCase() + ', business-hours halls at ×' + winF.mult : 'no window rule') + '. Batch halls hold a flat ×0.6, and a hall already on grid carries a light incumbency bonus that only breaks ties.';
+
+    const dcBars = fill.sites.map(st => ({
+      name: st.name,
+      dotStyle: { width: '9px', height: '9px', borderRadius: '3px', flex: 'none', background: siteColor[st.id] },
+      usedLabel: st.w + ' / ' + st.cap + ' ' + unit,
+      segments: st.onGrid.map(h => ({
+        style: { width: (h.usage / Math.max(1, st.cap) * 100) + '%', height: '100%', background: T[h.priority].color, borderRight: '1px solid var(--eg-bg2)' }
+      })),
+      rows: st.halls.map(h => {
+        const onGrid = st.gridIds.indexOf(h.id) > -1;
+        const unserved = st.unserved.indexOf(h) > -1;
+        const state = onGrid ? 'GRID' : unserved ? 'UNSERVED' : 'GEN';
+        return {
+          name: h.isRequest ? h.name + ' (requested)' : h.name,
+          usageLabel: h.usage + ' ' + unit,
+          priority: h.priority, prioStyle: prioStyle(h.priority),
+          sub: (h.profile === 'batch' ? 'Batch ×0.6' : 'Business ×' + (winF ? winF.mult : 1)) + ' · value ' + this.hallValue(h, hour).toFixed(1) + (onGrid || h.isRequest ? '' : ' · was ' + h.source.toLowerCase()),
+          state, stateStyle: stateStyle(state),
+          onOpen: h.isRequest ? (() => {}) : (() => this.setState({ openHall: h.id }))
+        };
+      })
+    }));
+
+    const fix = fill.unserved.length ? this.minFix(hour, req) : null;
+    const requestSites = [{ id: null, label: 'None' }].concat(S.sites.map(s => ({ id: s.id, label: s.name }))).map(o => ({
+      label: o.label,
+      onPick: () => this.setState(s => ({ request: { ...s.request, siteId: o.id } })),
+      style: { ...BTN, minHeight: '36px', padding: '0 11px', borderRadius: '9px', fontSize: '11px', fontWeight: 600, color: 'var(--eg-muted)', ...(S.request.siteId === o.id ? { borderColor: 'var(--eg-accent)', background: 'var(--eg-accent-soft)', color: 'var(--eg-accent)' } : {}) }
+    }));
+    const displaced = req ? baseFill.sites.reduce((acc, bs) => {
+      const ns = fill.sites.find(x => x.id === bs.id);
+      bs.gridIds.forEach(id => {
+        if (ns && ns.gridIds.indexOf(id) < 0) {
+          const h = bs.halls.find(x => x.id === id);
+          if (h) acc.push({ title: h.site + ' · ' + h.name, detail: h.usage + ' ' + unit + ' · ' + h.priority });
+        }
+      });
+      return acc;
+    }, []) : [];
+    const reqSiteName = req ? (S.sites.find(s => s.id === req.siteId) || {}).name : '';
+
+    // ── schedule: value forfeited by the capacity squeeze, hour by hour ──
+    const startHour = S.now.getHours();
+    const hours = [];
+    for (let i = 0; i < 24; i++) {
+      const h = (startHour + i) % 24;
+      const f = this.solveFill(h, req);
+      const ideal = this.allHalls().reduce((a, x) => a + this.hallValue(x, h), 0);
+      hours.push({ h, forfeit: Math.max(0, ideal - f.captured), unserved: f.unserved.length, captured: f.captured });
+    }
+    const maxF = Math.max(...hours.map(x => x.forfeit)) || 1;
+    const minF = Math.min(...hours.map(x => x.forfeit));
+    const pickHour = h => () => this.setState({ planHour: h, sheet: null, tab: 'plan' });
+    const scheduleHours = hours.map(x => {
+      const good = x.forfeit <= minF + 0.01;
+      return {
+        onPick: pickHour(x.h),
+        barStyle: {
+          width: '100%', borderRadius: '3px 3px 0 0',
+          height: Math.max(6, Math.round(x.forfeit / maxF * 112)) + 'px',
+          background: good ? 'var(--eg-accent)' : (this.factorFor(x.h) >= 1.8 ? 'var(--eg-red)' : 'var(--eg-line)'),
+          opacity: good ? 1 : 0.85
+        }
+      };
+    });
+    const scheduleAxis = [0, 6, 12, 18, 23].map(i => ({ label: String((startHour + i) % 24).padStart(2, '0') + ':00' }));
+    const bestWindows = hours.slice().sort((a, b) => a.forfeit - b.forfeit).slice(0, 3).map((x, i) => {
+      const w = this.windowFor(x.h);
+      return {
+        hourLabel: String(x.h).padStart(2, '0') + ':00',
+        title: i === 0 ? 'Least value forfeited' : 'Alternative',
+        detail: (w ? w.label + ' ×' + w.mult : '') + ' · forfeits ' + x.forfeit.toFixed(1) + (x.unserved ? ' · ' + x.unserved + ' unserved' : ''),
+        onPick: pickHour(x.h),
+        style: { border: '1px solid var(--eg-line)', borderRadius: '12px', padding: '11px 12px', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', ...(i === 0 ? { borderColor: 'var(--eg-accent)', background: 'var(--eg-accent-soft)' } : {}) }
+      };
+    });
+
+    // ── fleet ──
+    const openHallRaw = S.openHall ? this.allHalls().find(h => h.id === S.openHall) : null;
+    const sites = S.sites.map(s => {
+      const grid = s.halls.filter(h => h.source === 'GRID').reduce((a, h) => a + h.usage, 0);
+      return {
+        name: s.name,
+        sub: s.halls.length + ' halls · ' + s.halls.reduce((a, h) => a + h.usage, 0) + ' ' + unit + ' installed',
+        gridLabel: grid + ' ' + unit,
+        halls: s.halls.map(h => ({
+          name: h.name, priority: h.priority, source: h.source,
+          usageLabel: h.usage + ' ' + unit,
+          sub: (h.profile === 'batch' ? 'Batch workload' : 'Business hours') + ' · value ' + this.hallValue(h, hour).toFixed(1),
+          prioStyle: prioStyle(h.priority), sourceStyle: sourceStyle(h.source),
+          onOpen: () => this.setState({ openHall: h.id })
+        }))
+      };
+    });
+    const STAT = { fontSize: '18px', fontWeight: 600, letterSpacing: '-.03em' };
+    const fleetStats = [
+      { label: 'On grid', value: this.gridLoad() + ' ' + unit, style: { ...STAT, color: 'var(--eg-accent)' } },
+      { label: 'On generator', value: this.genLoad() + ' ' + unit, style: STAT },
+      { label: 'Halls', value: String(this.allHalls().length), style: STAT }
+    ];
+
+    let openHall = null;
+    if (openHallRaw) {
+      const shape = D ? D.demand.values : [];
+      const vals = shape.map(v => v / (Math.max(...shape) || 1) * openHallRaw.usage * (openHallRaw.profile === 'batch' ? 0.75 : 1) + openHallRaw.usage * 0.35);
+      const pp = this.path(vals, 320, 54);
+      const c = this.hallValue(openHallRaw, hour), win = this.windowFor(hour);
+      openHall = {
+        name: openHallRaw.site + ' · ' + openHallRaw.name,
+        sub: (openHallRaw.profile === 'batch' ? 'Batch workload — shiftable' : 'Business-hours workload — clock sensitive') + ' · ' + openHallRaw.priority + ' priority',
+        usage: String(openHallRaw.usage), usageLabel: openHallRaw.usage + ' ' + unit,
+        source: openHallRaw.source, sourceStyle: { ...sourceStyle(openHallRaw.source), marginLeft: 'auto', padding: '4px 8px' },
+        line: pp.line, area: pp.area,
+        lineStyle: { fill: 'none', stroke: 'var(--eg-accent)', strokeWidth: 1.8, strokeLinejoin: 'round' },
+        areaStyle: { fill: 'var(--eg-accent)', opacity: 0.13, stroke: 'none' },
+        costLabel: c.toFixed(1), costStyle: { fontSize: '15px', fontWeight: 600, color: c >= 12 ? 'var(--eg-accent)' : c <= 3 ? 'var(--eg-muted)' : 'var(--eg-amber)' },
+        costNote: 'Priority ' + openHallRaw.priority + ' scores ' + PRIO[openHallRaw.priority] + ', ' + (openHallRaw.profile === 'batch' ? 'and a batch workload holds a flat ×0.6 whatever the hour.' : 'multiplied by ' + (win ? win.label.toLowerCase() + ' ×' + win.mult : '×1') + ' at ' + String(hour).padStart(2, '0') + ':00.') + ' Higher value wins substation space.',
+        prioOptions: ['HIGH', 'MEDIUM', 'LOW'].map(p => ({
+          label: p, onPick: () => this.patchHall(openHallRaw.id, { priority: p }),
+          style: { ...BTN, flex: 1, minHeight: '44px', borderRadius: '10px', fontSize: '11px', fontWeight: 700, letterSpacing: '.05em', color: 'var(--eg-muted)', ...(openHallRaw.priority === p ? { borderColor: T[p].color, background: T[p].bg, color: T[p].color } : {}) }
+        })),
+        usageUp: () => this.patchHall(openHallRaw.id, { usage: Math.min(40, openHallRaw.usage + 1) }),
+        usageDown: () => this.patchHall(openHallRaw.id, { usage: Math.max(1, openHallRaw.usage - 1) }),
+        toggleLabel: openHallRaw.source === 'GRID' ? 'Switch to generator' : 'Return to grid',
+        toggleIcon: openHallRaw.source === 'GRID' ? 'ph-power' : 'ph-plug',
+        toggleSource: () => {
+          const next = openHallRaw.source === 'GRID' ? 'GENERATOR' : 'GRID';
+          this.patchHall(openHallRaw.id, { source: next });
+          this.showToast(openHallRaw.site + ' ' + openHallRaw.name + ' → ' + next.toLowerCase());
+        }
+      };
+    }
+
+    const openChartObj = S.openChart === 'mix'
+      ? { label: 'Fuel Mix', about: 'The share of each fuel source supplying electricity right now.', isSeries: false, isMix: true, footer }
+      : (charts.find(c => c.key === S.openChart) || null);
+
+    const tabs = [
+      { key: 'home', label: 'Home', icon: 'ph-chart-line' },
+      { key: 'plan', label: 'Plan', icon: 'ph-sliders-horizontal' },
+      { key: 'settings', label: 'Settings', icon: 'ph-gear' }
+    ].map(t => ({
+      label: t.label, icon: t.icon,
+      onSelect: () => this.setState({ tab: t.key, openChart: null, openHall: null, sheet: null }),
+      topStyle: { minHeight: '32px', padding: '0 11px', border: '1px solid transparent', borderRadius: '9px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontFamily: 'Inter,system-ui,sans-serif', fontSize: '11.5px', fontWeight: 600, whiteSpace: 'nowrap', ...(S.tab === t.key ? { color: 'var(--eg-accent)', background: 'var(--eg-accent-soft)', borderColor: 'var(--eg-accent)' } : { color: 'var(--eg-muted)', background: 'transparent' }) },
+      style: { flex: 1, minHeight: '46px', border: 0, borderRadius: '10px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px', fontFamily: 'Inter,system-ui,sans-serif', ...(S.tab === t.key ? { color: 'var(--eg-accent)', background: 'var(--eg-accent-soft)' } : { color: 'var(--eg-muted)', background: 'transparent' }) }
+    }));
+
+    const win = this.windowFor(hour);
+    return {
+      unit, frameDark: S.theme === 'nocturne',
+      appStyle: { ...THEMES[S.theme], height: '100dvh', width: '100%', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: 'var(--eg-bg)', color: 'var(--eg-text)', fontFamily: 'Inter,system-ui,sans-serif' },
+      canInstall: !!S.canInstall,
+      install: () => { if (this.deferred) { this.deferred.prompt(); this.deferred = null; this.setState({ canInstall: false }); } },
+      installNote: S.canInstall
+        ? 'Add Grid Balance to your home screen or desktop — it opens full screen, without browser chrome.'
+        : 'On iPhone and iPad, open the browser Share menu and choose Add to Home Screen. On Android and desktop Chrome an install button appears here once the browser offers it.',
+      themeIcon: S.theme === 'nocturne' ? 'ph-sun' : 'ph-moon',
+      toggleTheme: () => this.setState({ theme: S.theme === 'nocturne' ? 'organic' : 'nocturne' }),
+      clockLabel: this.hm(S.now) + (S.planHour === null ? '' : ' · planning ' + String(hour).padStart(2, '0') + ':00'),
+      liveLabel: S.live ? 'LIVE' : 'SNAPSHOT',
+      liveDotStyle: { width: '6px', height: '6px', borderRadius: '99px', flex: 'none', animation: 'eg-pulse 2.4s ease-in-out infinite', background: S.live ? 'var(--eg-good)' : 'var(--eg-amber)' },
+      dataNote: S.note,
+      refetch: () => { this.setState({ note: 'Reaching the EirGrid feed…' }); this.tryLive(); },
+      isHome: S.tab === 'home', isPlan: S.tab === 'plan', isFleet: S.tab === 'fleet',
+      isAlerts: S.tab === 'alerts', isSettings: S.tab === 'settings',
+      chartWindowLabel: charts.length ? charts[0].windowLabel : '',
+      tabs, charts, mix, headline, gridLoadLabel, suggestions, alerts,
+      alertCountLabel: alerts.length + ' items',
+      statusLabel, statusChipStyle: { fontSize: '9.5px', fontWeight: 700, letterSpacing: '.06em', padding: '4px 9px', borderRadius: '999px', flex: 'none', whiteSpace: 'nowrap', color: statusColor, border: '1px solid ' + statusColor },
+      goPlan: () => this.setState({ tab: 'plan' }),
+      openMix: () => this.setState({ openChart: 'mix' }),
+      openSchedule: () => this.setState({ sheet: 'schedule' }),
+      closeSheets: () => this.setState({ openChart: null, openHall: null, sheet: null }),
+      stop: e => e.stopPropagation(),
+      chartOpen: !!openChartObj, openChart: openChartObj,
+      hallOpen: !!openHall, openHall,
+      scheduleOpen: S.sheet === 'schedule', scheduleHours, scheduleAxis, bestWindows,
+      scheduleNote: 'Priority value forfeited by the capacity squeeze, hour by hour',
+      cluster, planStats, planNote, dcBars,
+      applyLabel: fill.switches ? 'Apply — ' + fill.switches + ' switches' : 'Already at the optimum',
+      applyStyle: { minHeight: '46px', borderRadius: '11px', border: '1px solid var(--eg-accent)', fontFamily: 'Inter,system-ui,sans-serif', fontSize: '12.5px', fontWeight: 600, cursor: fill.switches ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: fill.switches ? 'var(--eg-accent)' : 'transparent', color: fill.switches ? 'var(--eg-accent-ink)' : 'var(--eg-muted)', borderColor: fill.switches ? 'var(--eg-accent)' : 'var(--eg-line)' },
+      hasBreach: fill.unserved.length > 0,
+      breachTitle: fill.unserved.length + ' hall' + (fill.unserved.length === 1 ? '' : 's') + ' cannot be served at ' + String(hour).padStart(2, '0') + ':00',
+      breachRows: fill.unserved.map(h => ({
+        title: h.site + ' · ' + h.name,
+        usageLabel: h.usage + ' ' + unit,
+        reason: h.isRequest
+          ? 'No substation space at ' + h.site + ' — the ' + S.dcLimit + ' ' + unit + ' limit is full'
+          : 'No substation space and the ' + S.genLimit + ' ' + unit + ' generator at ' + h.site + ' is full'
+      })),
+      breachFix: fix ? 'Smallest fix: raise the ' + fix.label + ' by ' + fix.add + ' ' + unit + ' and every hall is served.' : 'No single capacity increase within 30 ' + unit + ' clears this — reduce installed load or lower a hall\'s draw.',
+      requestSites, hasRequest: !!req, requestKw: String(S.request.kw),
+      requestUp: () => this.setState(s => ({ request: { ...s.request, kw: Math.min(40, s.request.kw + 1) } })),
+      requestDown: () => this.setState(s => ({ request: { ...s.request, kw: Math.max(1, s.request.kw - 1) } })),
+      requestIcon: fill.reqServed ? 'ph-check-circle' : 'ph-x-circle',
+      requestIconStyle: { fontSize: '16px', flex: 'none', color: fill.reqServed ? 'var(--eg-good)' : 'var(--eg-red)' },
+      requestVerdict: !req ? '' : (fill.reqServed
+        ? S.request.kw + ' ' + unit + ' can be served at ' + reqSiteName + ' at ' + String(hour).padStart(2, '0') + ':00' + (displaced.length ? ', by displacing ' + displaced.length + ' hall' + (displaced.length === 1 ? '' : 's') + ':' : ' with no displacement.')
+        : S.request.kw + ' ' + unit + ' cannot be served at ' + reqSiteName + ' at ' + String(hour).padStart(2, '0') + ':00 — the ' + S.dcLimit + ' ' + unit + ' substation limit blocks it even at HIGH priority.'),
+      requestDisplaced: fill.reqServed ? displaced : [],
+      applyPlan: () => {
+        if (!fill.switches) return;
+        const map = {};
+        fill.sites.forEach(st => st.halls.forEach(h => {
+          if (h.isRequest) return;
+          map[h.id] = st.gridIds.indexOf(h.id) > -1 ? 'GRID' : (st.unserved.indexOf(h) > -1 ? 'UNSERVED' : 'GENERATOR');
+        }));
+        this.setState(s => ({
+          sites: s.sites.map(si => ({ ...si, halls: si.halls.map(h => map[h.id] ? { ...h, source: map[h.id] } : h) })),
+          log: [{ icon: 'ph-power', sev: 'var(--eg-accent)', title: 'Allocation applied — ' + fill.gridTotal + ' ' + unit + ' on grid', detail: fill.switches + ' halls switched at ' + this.hm(new Date()) + ', priority value captured ' + fill.captured.toFixed(1) + ' of ' + fill.clusterCap + ' ' + unit + ' firm capacity.', time: this.hm(new Date()) }].concat(s.log)
+        }));
+        this.showToast(fill.switches + ' halls switched · ' + fill.gridTotal + ' ' + unit + ' on grid');
+      },
+      capacityConfig: [
+        { key: 'clusterLimit', label: 'Cluster substation', sub: 'Firm capacity for all datacentres', min: 20, max: 200 },
+        { key: 'dcLimit', label: 'Per datacentre', sub: 'Each site\'s own substation limit', min: 5, max: 80 },
+        { key: 'genLimit', label: 'Generator per site', sub: 'Above this, halls are unserved', min: 5, max: 60 }
+      ].map(c => ({
+        label: c.label, sub: c.sub, valueLabel: S[c.key] + ' ' + unit,
+        up: () => this.setState(s => { const o = {}; o[c.key] = Math.min(c.max, s[c.key] + 5); return o; }),
+        down: () => this.setState(s => { const o = {}; o[c.key] = Math.max(c.min, s[c.key] - 5); return o; })
+      })),
+      priorityLegend: ['HIGH', 'MEDIUM', 'LOW'].map(p => ({ label: p, cost: String(PRIO[p]), style: { fontSize: '9.5px', fontWeight: 700, letterSpacing: '.05em', color: T[p].color } })),
+      toast: S.toast,
+      themeOptions: [
+        { key: 'nocturne', label: 'Nocturne', sub: 'Dark control room', sw: 'linear-gradient(135deg,#0f1a1e,#2ec4a8)' },
+        { key: 'organic', label: 'Organic', sub: 'Light, warm paper', sw: 'linear-gradient(135deg,#f6f2e8,#009982)' }
+      ].map(t => ({
+        label: t.label, sub: t.sub,
+        swatchStyle: { width: '22px', height: '22px', borderRadius: '7px', flex: 'none', background: t.sw },
+        onPick: () => this.setState({ theme: t.key }),
+        style: { ...BTN, flex: 1, minHeight: '52px', borderRadius: '11px', display: 'flex', alignItems: 'center', gap: '9px', padding: '0 11px', ...(S.theme === t.key ? { borderColor: 'var(--eg-accent)', background: 'var(--eg-accent-soft)' } : {}) }
+      })),
+      windows: S.windows.map(w => ({
+        label: w.label, range: String(w.from).padStart(2, '0') + ':00 – ' + String(w.to).padStart(2, '0') + ':00',
+        multLabel: '×' + w.mult.toFixed(1),
+        tag: w.mult >= 1.5 ? 'HARD' : w.mult <= 0.8 ? 'EASY' : 'NORMAL',
+        tagStyle: { ...CHIP, ...(w.mult >= 1.5 ? { color: 'var(--eg-red)', background: 'rgba(229,116,104,.14)' } : w.mult <= 0.8 ? { color: 'var(--eg-good)', background: 'rgba(63,196,143,.14)' } : { color: 'var(--eg-muted)', background: 'var(--eg-line-soft)' }) },
+        up: () => this.setState(s => ({ windows: s.windows.map(x => x.id === w.id ? { ...x, mult: Math.min(4, +(x.mult + 0.2).toFixed(1)) } : x), plan: null })),
+        down: () => this.setState(s => ({ windows: s.windows.map(x => x.id === w.id ? { ...x, mult: Math.max(0.2, +(x.mult - 0.2).toFixed(1)) } : x), plan: null }))
+      })),
+      siteConfig: S.sites.map(s => ({
+        name: s.name,
+        sub: s.halls.length + ' halls · ' + s.halls.reduce((a, h) => a + h.usage, 0) + ' ' + unit,
+        onRename: e => { const v = e.target.value; this.setState(st => ({ sites: st.sites.map(x => x.id === s.id ? { ...x, name: v } : x) })); },
+        onDelete: () => this.setState(st => ({ sites: st.sites.filter(x => x.id !== s.id), plan: null })),
+        addHall: () => this.setState(st => ({ sites: st.sites.map(x => x.id === s.id ? { ...x, halls: x.halls.concat([{ id: s.id + 'h' + (Date.now() % 100000), name: 'Hall ' + (x.halls.length + 1), usage: 4, priority: 'MEDIUM', source: 'GRID', profile: 'batch' }]) } : x), plan: null })),
+        removeHall: () => this.setState(st => ({ sites: st.sites.map(x => x.id === s.id ? { ...x, halls: x.halls.slice(0, Math.max(1, x.halls.length - 1)) } : x), plan: null }))
+      })),
+      addSite: () => this.setState(st => {
+        const id = 'site' + (Date.now() % 100000);
+        const halls = [1, 2, 3, 4, 5, 6].map(i => ({ id: id + 'h' + i, name: 'Hall ' + i, usage: [5, 3, 2, 1, 7, 10][i - 1], priority: ['HIGH', 'LOW', 'MEDIUM', 'LOW', 'LOW', 'HIGH'][i - 1], source: 'GRID', profile: i % 2 ? 'business' : 'batch' }));
+        return { sites: st.sites.concat([{ id, name: 'Datacentre ' + (st.sites.length + 1), halls }]), plan: null };
+      }),
+      restoreAll: () => {
+        this.setState(s => ({ sites: s.sites.map(si => ({ ...si, halls: si.halls.map(h => ({ ...h, source: 'GRID' })) })), plan: null }));
+        this.showToast('Every hall returned to grid supply');
+      },
+      sites, fleetStats
+    };
+  }
+}
+
+</script>
+</body>
+</html>
